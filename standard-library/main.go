@@ -56,7 +56,19 @@ func (h *RecipesHandler) CreateRecipe(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *RecipesHandler) ListRecipe(w http.ResponseWriter, r *http.Request)   {}
+func (h *RecipesHandler) ListRecipes(w http.ResponseWriter, r *http.Request) {
+	resources, err := h.store.List()
+
+	jsonBytes, err := json.Marshal(resources)
+	if err != nil {
+		handlers.InternalServerErrorHandler(w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonBytes)
+}
+
 func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request)    {}
 func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {}
 func (h *RecipesHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {}
@@ -67,7 +79,7 @@ func (h *RecipesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.CreateRecipe(w, r)
 		return
 	case r.Method == http.MethodGet && RecipeRe.MatchString(r.URL.Path):
-		h.ListRecipe(w, r)
+		h.ListRecipes(w, r)
 		return
 	case r.Method == http.MethodGet && RecipeReWithID.MatchString(r.URL.Path):
 		h.GetRecipe(w, r)

@@ -8,11 +8,11 @@ Accept: application/json
 
 ###
 
-GET http://localhost:8080/recipes/
+POST http://localhost:8080/recipes/
 Accept: application/json
 
 {
-    "name": "H and C",
+    "name": "H and C 2",
     "ingredients": [
         {
             "name": "bread"
@@ -25,3 +25,8 @@ Accept: application/json
         }
     ]
 }
+
+###
+
+GET http://localhost:8080/recipes/
+Accept: application/json
