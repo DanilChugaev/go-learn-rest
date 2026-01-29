@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 
+	"standard-library/pkg/handlers"
 	"standard-library/pkg/recipes"
 
 	"github.com/gosimple/slug"
@@ -41,14 +42,14 @@ func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h *RecipesHandler) CreateRecipe(w http.ResponseWriter, r *http.Request) {
 	var recipe recipes.Recipe
 	if err := json.NewDecoder(r.Body).Decode(&recipe); err != nil {
-		InternalServerErrorHandler(w, r)
+		handlers.InternalServerErrorHandler(w, r)
 		return
 	}
 
 	// Convert the name of the recipe into URL friendly string
 	resourceID := slug.Make(recipe.Name)
 	if err := h.store.Add(resourceID, recipe); err != nil {
-		InternalServerErrorHandler(w, r)
+		handlers.InternalServerErrorHandler(w, r)
 		return
 	}
 
@@ -80,16 +81,6 @@ func (h *RecipesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		return
 	}
-}
-
-func InternalServerErrorHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Write([]byte("500 Internal Server Error"))
-}
-
-func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	w.Write([]byte("404 Not Found"))
 }
 
 func main() {
